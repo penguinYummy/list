@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>TCP</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="layout">
+            <div class="container1" id="todoContainer">
+                <div class="todo-item">
+                    <span class="todo-number">1. </span>
+                    <input type="text" class="input">
+                    <div class="checkbox" onclick="this.classList.toggle('checked')">✓</div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="container2"></div> 
+                <div class="container3">
+                    <button class="movetimeline" id="prevWeek">&lt;</button>
+                    <button class="backhome" onclick="location.href='month.html'">X</button>
+                    <div class="hour24">
+                        <div class="dayoftheweek">-</div>
+                        <div>00</div>
+                        <div>01</div>
+                        <div>02</div>
+                        <div>03</div>
+                        <div>04</div>
+                        <div>05</div>
+                        <div>06</div>
+                        <div>07</div>
+                        <div>08</div>
+                        <div>09</div>
+                        <div>10</div>
+                        <div>11</div>
+                        <div>12</div>
+                        <div>13</div>
+                        <div>14</div>
+                        <div>15</div>
+                        <div>16</div>
+                        <div>17</div>
+                        <div>18</div>
+                        <div>19</div>
+                        <div>20</div>
+                        <div>21</div>
+                        <div>22</div>
+                        <div>23</div>
+                    </div>
+                    <div class="timeline" data-day="0">
+                        <div class="theday">일요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <div class="timeline" data-day="1">
+                        <div class="theday">월요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <div class="timeline" data-day="2">
+                        <div class="theday">화요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <div class="timeline" data-day="3">
+                        <div class="theday">수요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <div class="timeline" data-day="4">
+                        <div class="theday">목요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <div class="timeline" data-day="5">
+                        <div class="theday">금요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <div class="timeline" data-day="6">
+                        <div class="theday">토요일</div>
+                        <div class="timeline-content"></div>
+                    </div>
+                    <button class="movetimeline" id="nextWeek">&gt;</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="eventModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">일정 추가</div>
+                <input type="text" id="eventTitle" class="modal-input" placeholder="제목">
+                
+                <div class="time-inputs">
+                    <div class="time-input-group">
+                        <label class="time-input-label">시작 시간</label>
+                        <div class="time-input-wrapper">
+                            <input type="number" id="startHour" class="time-number-input" min="0" max="23" placeholder="시">
+                            <span class="time-separator">:</span>
+                            <input type="number" id="startMinute" class="time-number-input" min="0" max="59" placeholder="분" value="0">
+                        </div>
+                    </div>
+                    <div class="time-input-group">
+                        <label class="time-input-label">종료 시간</label>
+                        <div class="time-input-wrapper">
+                            <input type="number" id="endHour" class="time-number-input" min="0" max="23" placeholder="시">
+                            <span class="time-separator">:</span>
+                            <input type="number" id="endMinute" class="time-number-input" min="0" max="59" placeholder="분" value="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button class="modal-button" id="cancelBtn">취소</button>
+                    <button class="modal-button" id="saveBtn">저장</button>
+                </div>
+                <button class="modal-button delete" id="deleteBtn" style="display: none; margin-top: 10px;">삭제</button>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>

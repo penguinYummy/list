@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>TCP</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="layout">
+            <div class="container1" id="todoContainer">
+                <div class="todo-item">
+                    <span class="todo-number">1. </span>
+                    <input type="text" class="input">
+                    <div class="checkbox" onclick="this.classList.toggle('checked')">✓</div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="container2"></div> 
+                <div class="container3-1" id="monthCalendar">
+                    <button class="movetimeline" id="prevMonth">&lt;</button>
+                    <button class="movetimeline" id="nextMonth">&gt;</button>
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>

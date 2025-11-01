@@ -1,0 +1,398 @@
+.timeline-content {
+    flex: 1;
+    position: relative; 
+    display: flex; 
+    flex-direction: column; 
+    cursor: default; 
+}
+
+.time-slot {
+    width: 100%;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+}
+
+
+.timeline-content:hover {
+    background-color: rgba(211, 200, 197, 0.1); 
+}
+
+.event-block {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: #f9ebea; 
+    border-top: 2px solid #d3c8c5; 
+    border-bottom: 2px solid #d3c8c5; 
+    padding: 4px;
+    font-size: 0.85rem;
+    color: #545454;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    z-index: 10;
+    box-sizing: border-box;
+}
+
+.movetimeline {
+  background-color: #f9ebea;
+  height: 30px;
+  width: 30px;
+  border-radius: 30px;
+  border: 2px solid #d3c8c5;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+.movetimeline:first-child {
+  left: 5px;
+}
+
+.movetimeline:last-of-type {
+  right: 5px;
+}
+
+.movetimeline:hover {
+  opacity: 1;
+}
+
+
+.layout {
+    background-color: #f9ebea;
+    padding: 10px;
+    display: flex;
+    height: 690px;
+    border-radius: 10px;
+    color: #545454;
+}
+
+.right {
+    width: 70%;
+    border-radius: 10px;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container1 {
+    width: 30%;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 2px solid #d3c8c5;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input {
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid #d5d8dc;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 1rem;
+    outline: none;
+}
+
+.input:focus {
+    border-bottom-color: #3498db;
+}
+
+.checkbox {
+    min-width: 24px;
+    min-height: 24px;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #d3c8c5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.125rem;
+    color: transparent;
+    text-align: center;
+    line-height: 1.25rem;
+}
+
+.checkbox.checked {
+    color: red;
+}
+
+.container2 {
+    flex: 0 0 15%;
+    border-radius: 10px;
+    border: 2px solid #d3c8c5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+.container3 {
+    display: flex;
+    flex: 1;
+    border: 2px solid #d3c8c5;
+    border-radius: 10px;
+    align-items: center;
+    position: relative;
+    overflow: visible;
+}
+
+.timeline {
+    height: 100%;
+    width: 13%;
+    border-left: 2px solid #d3c8c5;
+    text-align: center;
+    font-size: 91%;
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline div.has-event {
+    border-bottom: none;
+    cursor: pointer;
+}
+
+.timeline div.event-start {
+    border-top: 2px solid #d3c8c5;
+    font-weight: bold;
+}
+
+.timeline div.event-end {
+    border-bottom: 2px solid #d3c8c5;
+}
+
+.theday.focused-day {
+    /* 날짜 텍스트 강조 */
+    font-weight: bold;
+    color: #333; /* 더 진한 색상 */
+}
+
+.timeline.focused-timeline {
+    border: 2px solid ;
+}
+
+.theday {
+    padding-bottom: 5px;
+    width: 100%;
+    border-bottom: 2px solid #d3c8c5;
+    cursor: default;
+    flex-shrink: 0;
+}
+
+.hour24 {
+    height: 100%;
+    width: 9%;
+    font-size: 91%;
+    text-align: center;
+}
+
+.hour24 div {
+    border-bottom: 2px solid #d3c8c5;
+}
+
+.hour24:last-child {
+    border-bottom: none;
+}
+
+.dayoftheweek {
+    color: transparent;
+    border-bottom: 2px solid #d3c8c5;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.backhome {
+    height: 25px;
+    width: 25px;
+    font-size: 0.9375rem;
+    color: #545454;
+    border: 2px solid #d3c8c5;
+    border-radius: 25px;
+    background: none;
+    position: absolute;
+    z-index: 1;
+    top: 0.2%;
+    margin: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.backhome:hover {
+    opacity: 1;
+}
+
+.container3-1 {
+    display: flex;
+    flex: 1;
+    border: 2px solid #d3c8c5;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: visible;
+    flex-wrap: wrap;
+    gap: 1px;
+}
+
+.monthbox {
+    width: 13%;
+    margin: 4px;
+    height: 14%;
+    border: 2px solid #d3c8c5;
+    background: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.monthbox:hover {
+    background-color: rgba(211, 200, 197, 0.3);
+}
+
+.monthboxday {
+    background-color: #ffffff;
+    border-bottom: 2px solid #d3c8c5;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.monthbox.today {
+    border: 3px solid #545454;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 2px solid #d3c8c5;
+    border-radius: 10px;
+    width: 300px;
+}
+
+.modal-header {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #545454;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 2px solid #d3c8c5;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #545454;
+}
+
+.time-inputs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.time-input-group {
+    flex: 1;
+}
+
+.time-input-label {
+    font-size: 0.85rem;
+    color: #545454;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.time-input-wrapper {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.time-number-input {
+    width: 50px;
+    padding: 8px;
+    border: 2px solid #d3c8c5;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+    box-sizing: border-box;
+}
+.time-number-input::-webkit-outer-spin-button,
+.time-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; 
+    margin: 0;
+}
+
+.time-number-input:focus {
+    outline: none;
+    border-color: #545454;
+}
+
+.time-separator {
+    font-size: 1.2rem;
+    color: #545454;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-button {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #d3c8c5;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: #f9ebea;
+}
+
+.modal-button:hover {
+    background-color: #d3c8c5;
+}
+
+.modal-button.delete {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #c0392b;
+}
+
+.modal-button.delete:hover {
+    background-color: #c0392b;
+}
