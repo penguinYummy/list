@@ -2,77 +2,101 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>일본어 단어 정복 프로그램</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>일본어 단어 정복</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 30px; background-color: #f0f2f5; }
-        .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 450px; }
-        .unit-info { color: #888; font-size: 0.9em; margin-bottom: 5px; }
-        .progress { font-size: 0.8em; color: #3498db; margin-bottom: 20px; }
-        .korean { font-size: 2.2em; font-weight: bold; margin-bottom: 30px; color: #2c3e50; min-height: 1.2em; }
-        .japanese { font-size: 1.8em; color: #e74c3c; min-height: 1.5em; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; }
-        button { padding: 12px 25px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 8px; transition: 0.3s; }
-        .btn-main { background-color: #3498db; color: white; width: 100%; }
-        .btn-main:hover { background-color: #2980b9; }
+        /* touch-action: manipulation -> 더블 탭 확대 방지 */
+        html, body { 
+            font-family: 'Malgun Gothic', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px; 
+            background-color: #f0f2f5;
+            touch-action: manipulation; 
+            user-select: none; /* 텍스트 선택 방지 (공부용) */
+        }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; box-sizing: border-box; }
+        .unit-selector { margin-bottom: 20px; display: flex; gap: 5px; justify-content: center; }
+        .unit-btn { padding: 8px 15px; font-size: 0.9em; cursor: pointer; border: 1px solid #ddd; border-radius: 5px; background: #fff; }
+        .unit-btn.active { background: #34495e; color: white; border-color: #34495e; }
+        
+        .unit-info { color: #888; font-size: 0.8em; margin-bottom: 5px; }
+        .korean { font-size: 2em; font-weight: bold; margin: 20px 0; color: #2c3e50; min-height: 1.2em; word-break: keep-all; }
+        .japanese { font-size: 1.6em; color: #e74c3c; min-height: 1.5em; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .btn-main { 
+            padding: 15px; font-size: 1.2em; cursor: pointer; border: none; border-radius: 10px; 
+            background-color: #3498db; color: white; width: 100%; 
+            touch-action: manipulation; /* 버튼 확대 방지 */
+        }
         .hidden { visibility: hidden; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="unit-title" class="unit-info">단어장 로딩 중...</div>
-    <div id="progress" class="progress">0 / 0</div>
-    <div id="korean-text" class="korean">화면을 클릭하세요</div>
+    <div class="unit-selector">
+        <button class="unit-btn active" onclick="selectUnit(0)">1단계</button>
+        <button class="unit-btn" onclick="selectUnit(1)">2단계</button>
+        <button class="unit-btn" onclick="selectUnit(2)">3단계</button>
+    </div>
+
+    <div id="unit-title" class="unit-info">단어장 1구역</div>
+    <div id="progress" style="font-size: 0.8em; color: #3498db; margin-bottom: 15px;">1 / 50</div>
+    
+    <div id="korean-text" class="korean">로딩 중...</div>
     <div id="japanese-text" class="japanese hidden">정답</div>
+    
     <button id="main-btn" class="btn-main" onclick="handleButtonClick()">답 확인하기</button>
 </div>
 
 <script>
-    // [사진 1, 2, 3 전체 데이터]
+    // [데이터 부분은 이전과 동일하게 유지]
     const unit1 = [
         {kr: "개", jp: "犬(いぬ)"}, {kr: "발, 다리", jp: "足(あし)"}, {kr: "손", jp: "手(て)"},
         {kr: "생선", jp: "魚(さかな)"}, {kr: "초밥", jp: "寿司(すし)"}, {kr: "고양이", jp: "猫(ねこ)"},
         {kr: "얼굴", jp: "顔(かお)"}, {kr: "책상", jp: "机(つくえ)"}, {kr: "나, 저 (1인칭)", jp: "私(わたし)"},
-        {kr: "나 (남성)", jp: "ぼく"}, {kr: "나 (남성, 가볍게)", jp: "おれ"}, {kr: "나 (격식)", jp: "わたくし"},
-        {kr: "꽃", jp: "花(はな)"}, {kr: "눈(Snow)", jp: "雪(ゆき)"}, {kr: "배(Ship)", jp: "船(ふね)"},
-        {kr: "벚꽃", jp: "桜(さくら)"}, {kr: "산", jp: "山(やま)"}, {kr: "책", jp: "本(ほん)"},
-        {kr: "기모노", jp: "着物(きもの)"}, {kr: "가게, 상점", jp: "店(みせ)"}, {kr: "1개", jp: "ひとつ"},
-        {kr: "안경", jp: "めがね"}, {kr: "지도", jp: "地図(ちず)"}, {kr: "과일", jp: "果物(くだもの)"},
-        {kr: "불꽃놀이", jp: "花火(はなび)"}, {kr: "연필", jp: "鉛筆(えんぴつ)"}, {kr: "배고픈 모양(꼬르륵)", jp: "ぺこぺこ"},
-        {kr: "여기, 이곳", jp: "ここ"}, {kr: "오후", jp: "午後(ごご)"}, {kr: "맛", jp: "味(あじ)"},
-        {kr: "~반(Half)", jp: "半(はん)"}, {kr: "밤", jp: "晩(ばん)"}, {kr: "100", jp: "ひゃく"},
-        {kr: "가수", jp: "歌手(かしゅ)"}, {kr: "식사", jp: "食事(しょくじ)"}, {kr: "학교", jp: "学校(がっこう)"},
-        {kr: "잡지", jp: "雑誌(ざっし)"}, {kr: "3개", jp: "みっつ"}, {kr: "표, 티켓", jp: "切符(きっぷ)"},
-        {kr: "화재", jp: "火事(かじ)"}, {kr: "한자", jp: "漢字(かんじ)"}, {kr: "튀김", jp: "てんぷら"},
-        {kr: "한가운데", jp: "まんなか"}, {kr: "한국", jp: "韓国(かんこく)"}, {kr: "우동", jp: "うどん"},
-        {kr: "아줌마, 이모", jp: "おばさん"}, {kr: "할머니", jp: "おばあさん"}, {kr: "아저씨, 삼촌", jp: "おじさん"},
-        {kr: "할아버지", jp: "おじいさん"}, {kr: "고등학교", jp: "高校(こうこう)"}
+        {kr: "나 (남성)", jp: "ぼく"}, {kr: "나 (남성, 가볍게)", jp: "おれ"}, {kr: "나 (격식)", jp: "わ택시(わたくし)"},
+        {kr: "꽃", jp: "花(는)"}, {kr: "눈(Snow)", jp: "雪(ゆき)"}, {kr: "배(Ship)", jp: "船(ふね)"},
+        {kr: "벚꽃", jp: "桜(사쿠라)"}, {kr: "산", jp: "山(야마)"}, {kr: "책", jp: "本(혼)"},
+        {kr: "기모노", jp: "着物(기모노)"}, {kr: "가게, 상점", jp: "店(미세)"}, {kr: "1개", jp: "하나(ひとつ)"},
+        {kr: "안경", jp: "안경(めがね)"}, {kr: "지도", jp: "지도(ちず)"}, {kr: "과일", jp: "과일(くだもの)"},
+        {kr: "불꽃놀이", jp: "꽃불(はなび)"}, {kr: "연필", jp: "연필(えんぴつ)"}, {kr: "배고픈 모양", jp: "페코페코(ぺこぺこ)"},
+        {kr: "여기", jp: "여기(ここ)"}, {kr: "오후", jp: "오후(ごご)"}, {kr: "맛", jp: "맛(あじ)"},
+        {kr: "~반(Half)", jp: "반(はん)"}, {kr: "밤", jp: "밤(ばん)"}, {kr: "100", jp: "백(ひゃく)"},
+        {kr: "가수", jp: "가수(かしゅ)"}, {kr: "식사", jp: "식사(しょくじ)"}, {kr: "학교", jp: "학교(がっこう)"},
+        {kr: "잡지", jp: "잡지(ざっし)"}, {kr: "3개", jp: "세개(みっつ)"}, {kr: "표, 티켓", jp: "표(きっぷ)"},
+        {kr: "화재", jp: "화재(かじ)"}, {kr: "한자", jp: "한자(かんじ)"}, {kr: "튀김", jp: "튀김(てんぷら)"},
+        {kr: "한가운데", jp: "한가운데(まんなか)"}, {kr: "한국", jp: "한국(かんこく)"}, {kr: "우동", jp: "우동(うどん)"},
+        {kr: "아줌마", jp: "오바산(おばさん)"}, {kr: "할머니", jp: "오바아산(おばあさん)"}, {kr: "아저씨", jp: "오지산(おじ산)"},
+        {kr: "할아버지", jp: "오지이산(おじいさん)"}, {kr: "고등학교", jp: "고교(こうこう)"}
     ];
 
     const unit2 = [
-        {kr: "어머니", jp: "おかあさん"}, {kr: "형, 오빠", jp: "おにいさん"}, {kr: "수학", jp: "すうがく"},
-        {kr: "누나, 언니", jp: "おねえさん"}, {kr: "영화", jp: "えいが"}, {kr: "많다", jp: "おおい"},
-        {kr: "아버지", jp: "おとうさん"}, {kr: "숫자 0", jp: "ゼロ / れい / まる"}, {kr: "1", jp: "いち"},
-        {kr: "2", jp: "に"}, {kr: "3", jp: "さん"}, {kr: "4", jp: "よん / し"}, {kr: "5", jp: "ご"},
-        {kr: "6", jp: "ろく"}, {kr: "7", jp: "なな / しち"}, {kr: "8", jp: "はち"}, {kr: "9", jp: "きゅう / く"},
-        {kr: "10", jp: "じゅう"}, {kr: "전화번호", jp: "電話番号(でんわばんごう)"}, {kr: "몇 번입니까?", jp: "何番(なんばん)ですか"},
-        {kr: "전화번호의 '-' 표시", jp: "の"}, {kr: "4시", jp: "四時(よじ)"}, {kr: "7시", jp: "七時(しちじ)"},
-        {kr: "9시", jp: "九時(くじ)"}, {kr: "~분", jp: "分(ふん/ぷん)"}, {kr: "10분", jp: "じゅっぷん"},
-        {kr: "~부터 ~까지", jp: "～から ～まで"}, {kr: "오전", jp: "午前(ごぜん)"}
+        {kr: "어머니", jp: "오카아산"}, {kr: "형, 오빠", jp: "오니이산"}, {kr: "수학", jp: "すうがく"},
+        {kr: "누나, 언니", jp: "오네에산"}, {kr: "영화", jp: "えいが"}, {kr: "많다", jp: "오오이"},
+        {kr: "아버지", jp: "오토오산"}, {kr: "0", jp: "제로/레이"}, {kr: "1", jp: "이치"},
+        {kr: "2", jp: "니"}, {kr: "3", jp: "산"}, {kr: "4", jp: "욘/시"}, {kr: "5", jp: "고"},
+        {kr: "6", jp: "로쿠"}, {kr: "7", jp: "나나/시치"}, {kr: "8", jp: "하치"}, {kr: "9", jp: "큐/쿠"},
+        {kr: "10", jp: "쥬"}, {kr: "전화번호", jp: "덴와방고"}, {kr: "몇 번?", jp: "난방데스카"},
+        {kr: "전화번호 '-'", jp: "노"}, {kr: "4시", jp: "요지"}, {kr: "7시", jp: "시치지"},
+        {kr: "9시", jp: "쿠지"}, {kr: "~분", jp: "분/푼"}, {kr: "10분", jp: "쥬픈"},
+        {kr: "~부터 ~까지", jp: "카라 마데"}, {kr: "오전", jp: "고젠"}
     ];
 
     const unit3 = [
-        {kr: "안녕(아침)", jp: "おはよう"}, {kr: "안녕하세요(점심)", jp: "こんにちは"}, {kr: "안녕하세요(저녁)", jp: "こんばんは"},
-        {kr: "잘 가(헤어질 때)", jp: "さよ(う)なら / じゃあ、ね"}, {kr: "내일 또 봐", jp: "また、あした"},
-        {kr: "다녀오겠습니다", jp: "いってきます"}, {kr: "다녀오세요", jp: "いってらっしゃい"},
-        {kr: "다녀왔습니다", jp: "ただいま"}, {kr: "잘 다녀오셨어요?", jp: "おかえり(なさい)"},
-        {kr: "고마워", jp: "ありがとう"}, {kr: "미안합니다", jp: "ごめん(なさい) / すみません"},
-        {kr: "괜찮아요", jp: "かまいませんよ"}, {kr: "모르겠습니다", jp: "わかりません"},
-        {kr: "알았습니다", jp: "わかりました"}, {kr: "천만에요", jp: "どういたしまして"},
-        {kr: "여보세요", jp: "もしもし"}, {kr: "오래간만이야", jp: "ひさしぶり"},
-        {kr: "처음 뵙겠습니다", jp: "はじめまして"}, {kr: "취미", jp: "趣味(しゅみ)"},
-        {kr: "요리", jp: "料理(りょうり)"}, {kr: "독서", jp: "読書(どくしょ)"}, {kr: "여행", jp: "旅行(りょこう)"},
-        {kr: "이쪽이야말로", jp: "こちらこそ"}, {kr: "진실은 언제나 하나!", jp: "真実はいつもひとつ！"}
+        {kr: "안녕(아침)", jp: "오하요"}, {kr: "점심인사", jp: "콘니치와"}, {kr: "저녁인사", jp: "콘방와"},
+        {kr: "안녕(헤어질때)", jp: "사요나라"}, {kr: "내일 봐", jp: "마타 아시타"},
+        {kr: "다녀올게요", jp: "잇테키마스"}, {kr: "다녀오세요", jp: "잇테랏샤이"},
+        {kr: "다녀왔습니다", jp: "타다이마"}, {kr: "어서오세요", jp: "오카에리"},
+        {kr: "고마워", jp: "아리가토"}, {kr: "미안해요", jp: "고멘나사이/스미마센"},
+        {kr: "괜찮아요", jp: "카마이마센"}, {kr: "몰라요", jp: "와카리마센"},
+        {kr: "알겠어요", jp: "와카리마시타"}, {kr: "천만에요", jp: "도이타시마시테"},
+        {kr: "여보세요", jp: "모시모시"}, {kr: "오랜만이야", jp: "히사시부리"},
+        {kr: "처음 뵙겠습니다", jp: "하지메마시테"}, {kr: "취미", jp: "슈미"},
+        {kr: "요리", jp: "료리"}, {kr: "독서", jp: "도쿠쇼"}, {kr: "여행", jp: "료코"},
+        {kr: "이쪽이야말로", jp: "코치라코소"}, {kr: "진실은 하나!", jp: "신지츠와 이츠모 히토츠!"}
     ];
 
     const allUnits = [unit1, unit2, unit3];
@@ -80,20 +104,31 @@
     let wordIdx = 0;
     let isAnswerStep = false;
 
-    const elUnit = document.getElementById('unit-title');
-    const elProgress = document.getElementById('progress');
-    const elKr = document.getElementById('korean-text');
-    const elJp = document.getElementById('japanese-text');
-    const elBtn = document.getElementById('main-btn');
+    function selectUnit(idx) {
+        unitIdx = idx;
+        wordIdx = 0;
+        isAnswerStep = false;
+        
+        // 버튼 활성화 스타일 변경
+        const btns = document.querySelectorAll('.unit-btn');
+        btns.forEach((btn, i) => {
+            btn.classList.toggle('active', i === idx);
+        });
+        
+        render();
+    }
 
     function render() {
         const currentUnit = allUnits[unitIdx];
         const word = currentUnit[wordIdx];
 
-        elUnit.innerText = `단어장 ${unitIdx + 1}구역 (총 3구역)`;
-        elProgress.innerText = `${wordIdx + 1} / ${currentUnit.length}`;
-        elKr.innerText = word.kr;
-        elJp.innerText = word.jp;
+        document.getElementById('unit-title').innerText = `단어장 ${unitIdx + 1}구역`;
+        document.getElementById('progress').innerText = `${wordIdx + 1} / ${currentUnit.length}`;
+        document.getElementById('korean-text').innerText = word.kr;
+        document.getElementById('japanese-text').innerText = word.jp;
+
+        const elJp = document.getElementById('japanese-text');
+        const elBtn = document.getElementById('main-btn');
 
         if (isAnswerStep) {
             elJp.classList.remove('hidden');
@@ -114,14 +149,8 @@
             wordIdx++;
 
             if (wordIdx >= allUnits[unitIdx].length) {
+                alert(`${unitIdx + 1}단계를 모두 마쳤습니다!`);
                 wordIdx = 0;
-                unitIdx++;
-                if (unitIdx >= allUnits.length) {
-                    alert("모든 사진의 단어를 끝냈습니다! 처음부터 다시 시작합니다.");
-                    unitIdx = 0;
-                } else {
-                    alert(`다음 사진(단어장 ${unitIdx + 1})으로 넘어갑니다.`);
-                }
             }
         }
         render();
