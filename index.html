@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>일본어 단어 정복 - 랜덤 모드</title>
+    <title>일본어 단어 암기 (히라가나 모드)</title>
     <style>
         html, body { 
             font-family: 'Malgun Gothic', sans-serif; 
@@ -15,7 +15,6 @@
             touch-action: manipulation; 
             user-select: none;
         }
-        /* 컨테이너 크기 대폭 확대 */
         .container { 
             background: white; 
             padding: 40px; 
@@ -23,24 +22,23 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.15); 
             text-align: center; 
             width: 95%; 
-            max-width: 600px; /* 기존 400px에서 600px로 확대 */
+            max-width: 600px; 
             box-sizing: border-box; 
         }
         .unit-selector { margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .unit-btn { padding: 12px 20px; font-size: 1em; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; background: #fff; transition: 0.2s; }
+        .unit-btn { padding: 12px 20px; font-size: 1em; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
         .unit-btn.active { background: #34495e; color: white; border-color: #34495e; font-weight: bold; }
         
-        /* 글자 크기 확대 */
-        .korean { font-size: 3em; font-weight: bold; margin: 40px 0; color: #2c3e50; min-height: 1.2em; word-break: keep-all; }
-        .japanese { font-size: 2.5em; color: #e74c3c; min-height: 1.5em; margin-bottom: 40px; border-bottom: 3px solid #eee; padding-bottom: 15px; font-weight: bold; }
+        .korean { font-size: 3.5em; font-weight: bold; margin: 40px 0; color: #2c3e50; min-height: 1.2em; word-break: keep-all; }
+        .japanese { font-size: 4em; color: #e74c3c; min-height: 1.5em; margin-bottom: 40px; border-bottom: 3px solid #eee; padding-bottom: 15px; font-weight: bold; letter-spacing: 2px; }
         
         .btn-main { 
-            padding: 20px; font-size: 1.5em; cursor: pointer; border: none; border-radius: 15px; 
+            padding: 20px; font-size: 1.6em; cursor: pointer; border: none; border-radius: 15px; 
             background-color: #3498db; color: white; width: 100%; 
             touch-action: manipulation; font-weight: bold;
         }
         .hidden { visibility: hidden; }
-        .unit-info { color:#888; font-size: 1em; margin-bottom: 10px; }
+        .unit-info { color:#888; font-size: 1.1em; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -53,7 +51,7 @@
     </div>
 
     <div id="unit-title" class="unit-info">단어장 1구역</div>
-    <div id="progress" style="font-size: 1.1em; color: #3498db; margin-bottom: 20px; font-weight: bold;">1 / 50</div>
+    <div id="progress" style="font-size: 1.2em; color: #3498db; margin-bottom: 20px; font-weight: bold;">1 / 50</div>
     
     <div id="korean-text" class="korean">로딩 중...</div>
     <div id="japanese-text" class="japanese hidden">정답</div>
@@ -62,52 +60,52 @@
 </div>
 
 <script>
-    // 원본 데이터
+    // 오직 히라가나만 포함된 데이터 (사진 기반)
     const rawUnit1 = [
-        {kr: "개", jp: "犬(いぬ)"}, {kr: "발, 다리", jp: "足(あし)"}, {kr: "손", jp: "手(て)"},
-        {kr: "생선", jp: "魚(さかな)"}, {kr: "초밥", jp: "寿司(すし)"}, {kr: "고양이", jp: "猫(ねこ)"},
-        {kr: "얼굴", jp: "顔(かお)"}, {kr: "책상", jp: "机(つくえ)"}, {kr: "나, 저 (1인칭)", jp: "私(わたし)"},
-        {kr: "나 (남성)", jp: "ぼく"}, {kr: "나 (가볍게)", jp: "おれ"}, {kr: "나 (격식)", jp: "わ택시(わたく시)"},
-        {kr: "꽃", jp: "花(はな)"}, {kr: "눈(Snow)", jp: "雪(ゆき)"}, {kr: "배(Ship)", jp: "船(ふね)"},
-        {kr: "벚꽃", jp: "桜(さくら)"}, {kr: "산", jp: "山(やま)"}, {kr: "책", jp: "本(ほん)"},
-        {kr: "기모노", jp: "着物(きもの)"}, {kr: "가게, 상점", jp: "店(みせ)"}, {kr: "1개", jp: "ひとつ"},
-        {kr: "안경", jp: "め가네(めがね)"}, {kr: "지도", jp: "地図(ちず)"}, {kr: "과일", jp: "果物(くだもの)"},
-        {kr: "불꽃놀이", jp: "花火(하나비)"}, {kr: "연필", jp: "鉛筆(えんぴつ)"}, {kr: "배고픈 모양", jp: "ぺこぺこ"},
-        {kr: "여기, 이곳", jp: "ここ"}, {kr: "오후", jp: "午後(고고)"}, {kr: "맛", jp: "味(아지)"},
-        {kr: "~반(Half)", jp: "半(はん)"}, {kr: "밤", jp: "晩(ばん)"}, {kr: "100", jp: "ひゃく"},
-        {kr: "가수", jp: "歌手(かしゅ)"}, {kr: "식사", jp: "食事(しょくじ)"}, {kr: "학교", jp: "学校(가꼬)"},
-        {kr: "잡지", jp: "雑誌(ざっし)"}, {kr: "3개", jp: "みっつ"}, {kr: "표, 티켓", jp: "切符(키뿌)"},
-        {kr: "화재", jp: "火事(かじ)"}, {kr: "한자", jp: "漢字(かんじ)"}, {kr: "튀김", jp: "てんぷら"},
-        {kr: "한가운데", jp: "まんなか"}, {kr: "한국", jp: "韓国(칸코쿠)"}, {kr: "우동", jp: "うどん"},
+        {kr: "개", jp: "いぬ"}, {kr: "발/다리", jp: "あし"}, {kr: "손", jp: "て"},
+        {kr: "생선", jp: "さかな"}, {kr: "초밥", jp: "すし"}, {kr: "고양이", jp: "ねこ"},
+        {kr: "얼굴", jp: "かお"}, {kr: "책상", jp: "つくえ"}, {kr: "나/저(1인칭)", jp: "わたし"},
+        {kr: "나(남성용)", jp: "ぼく"}, {kr: "나(남성/가벼운)", jp: "おれ"}, {kr: "나(격식)", jp: "わたくし"},
+        {kr: "꽃", jp: "はな"}, {kr: "눈(Snow)", jp: "ゆき"}, {kr: "배(Ship)", jp: "ふね"},
+        {kr: "벚꽃", jp: "さくら"}, {kr: "산", jp: "やま"}, {kr: "책", jp: "ほん"},
+        {kr: "기모노", jp: "きもの"}, {kr: "가게", jp: "みせ"}, {kr: "1개", jp: "ひとつ"},
+        {kr: "안경", jp: "めが네"}, {kr: "지도", jp: "ちず"}, {kr: "과일", jp: "くだもの"},
+        {kr: "불꽃놀이", jp: "はなび"}, {kr: "연필", jp: "えんぴつ"}, {kr: "배고픔", jp: "ぺこぺこ"},
+        {kr: "여기", jp: "ここ"}, {kr: "오후", jp: "ごご"}, {kr: "맛", jp: "あじ"},
+        {kr: "반(Half)", jp: "はん"}, {kr: "밤", jp: "ばん"}, {kr: "100", jp: "ひゃく"},
+        {kr: "가수", jp: "かしゅ"}, {kr: "식사", jp: "しょくじ"}, {kr: "학교", jp: "がっこう"},
+        {kr: "잡지", jp: "ざっし"}, {kr: "3개", jp: "みっつ"}, {kr: "표/티켓", jp: "きっぷ"},
+        {kr: "화재", jp: "かじ"}, {kr: "한자", jp: "かんじ"}, {kr: "튀김", jp: "てんぷら"},
+        {kr: "한가운데", jp: "まんなか"}, {kr: "한국", jp: "かんこく"}, {kr: "우동", jp: "うどん"},
         {kr: "아줌마", jp: "おばさん"}, {kr: "할머니", jp: "おばあさん"}, {kr: "아저씨", jp: "おじさん"},
-        {kr: "할아버지", jp: "おじいさん"}, {kr: "고등학교", jp: "高校(고꼬)"}
+        {kr: "할아버지", jp: "おじいさん"}, {kr: "고등학교", jp: "こうこう"}
     ];
 
     const rawUnit2 = [
-        {kr: "어머니", jp: "おかあさん"}, {kr: "형, 오빠", jp: "おにいさん"}, {kr: "수학", jp: "すうがく"},
-        {kr: "누나, 언니", jp: "おねえさん"}, {kr: "영화", jp: "えいが"}, {kr: "많다", jp: "おおい"},
-        {kr: "아버지", jp: "おとうさん"}, {kr: "0", jp: "ゼロ/れい/まる"}, {kr: "1", jp: "いち"},
-        {kr: "2", jp: "に"}, {kr: "3", jp: "さん"}, {kr: "4", jp: "よん/し"}, {kr: "5", jp: "ご"},
-        {kr: "6", jp: "ろく"}, {kr: "7", jp: "나나/시치"}, {kr: "8", jp: "はち"}, {kr: "9", jp: "きゅう/く"},
-        {kr: "10", jp: "じゅう"}, {kr: "전화번호", jp: "電話番号"}, {kr: "몇 번?", jp: "何番ですか"},
-        {kr: "전화번호 '-'", jp: "の"}, {kr: "4시", jp: "四時(よじ)"}, {kr: "7시", jp: "七時(시치지)"},
-        {kr: "9시", jp: "九時(쿠지)"}, {kr: "~분", jp: "分(ふん/ぷん)"}, {kr: "10분", jp: "じゅっぷん"},
-        {kr: "~부터 ~까지", jp: "から ～ まで"}, {kr: "오전", jp: "午前(고젠)"}
+        {kr: "어머니", jp: "おかあさん"}, {kr: "형/오빠", jp: "おにいさん"}, {kr: "수학", jp: "すうがく"},
+        {kr: "누나/언니", jp: "おねえさん"}, {kr: "영화", jp: "えいが"}, {kr: "많다", jp: "おおい"},
+        {kr: "아버지", jp: "おとうさん"}, {kr: "숫자 0", jp: "ゼロ / れい"}, {kr: "숫자 1", jp: "いち"},
+        {kr: "숫자 2", jp: "に"}, {kr: "숫자 3", jp: "さん"}, {kr: "숫자 4", jp: "よん / し"}, {kr: "숫자 5", jp: "ご"},
+        {kr: "숫자 6", jp: "ろく"}, {kr: "숫자 7", jp: "なな / しち"}, {kr: "숫자 8", jp: "はち"}, {kr: "숫자 9", jp: "きゅう / く"},
+        {kr: "숫자 10", jp: "じゅう"}, {kr: "전화번호", jp: "でんわばんごう"}, {kr: "몇 번입니까?", jp: "なんばん"},
+        {kr: "의(연결)", jp: "の"}, {kr: "4시", jp: "よじ"}, {kr: "7시", jp: "しちじ"},
+        {kr: "9시", jp: "くじ"}, {kr: "~분", jp: "ふん / ぷん"}, {kr: "10분", jp: "じゅっぷん"},
+        {kr: "~부터 ~까지", jp: "から ～ まで"}, {kr: "오전", jp: "ごぜん"}
     ];
 
     const rawUnit3 = [
-        {kr: "안녕(아침)", jp: "おはよう"}, {kr: "점심인사", jp: "こんにちは"}, {kr: "저녁인사", jp: "こんばんは"},
-        {kr: "안녕(헤어질때)", jp: "さような라"}, {kr: "내일 봐", jp: "また、あした"},
+        {kr: "안녕(아침)", jp: "おはよう"}, {kr: "안녕(점심)", jp: "こんにちは"}, {kr: "안녕(저녁)", jp: "こんばんは"},
+        {kr: "잘가(헤어질때)", jp: "さようなら"}, {kr: "내일 봐", jp: "また、あした"},
         {kr: "다녀올게요", jp: "いってきます"}, {kr: "다녀오세요", jp: "いってらっしゃい"},
-        {kr: "다녀왔습니다", jp: "ただいま"}, {kr: "어서오세요", jp: "おかえり(나사이)"},
-        {kr: "고마워", jp: "ありがとう"}, {kr: "미안해요", jp: "ごめん(나사이)/すみません"},
-        {kr: "괜찮아요", jp: "かまいませんよ"}, {kr: "몰라요", jp: "わかりません"},
-        {kr: "알겠어요", jp: "わかりました"}, {kr: "천만에요", jp: "どういたしまして"},
+        {kr: "다녀왔습니다", jp: "ただいま"}, {kr: "잘 다녀왔니", jp: "おかえり"},
+        {kr: "고마워", jp: "ありがとう"}, {kr: "미안/죄송", jp: "ごめん / すみません"},
+        {kr: "괜찮아요", jp: "かまいません"}, {kr: "모르겠습니다", jp: "わかりません"},
+        {kr: "알겠습니다", jp: "わかりました"}, {kr: "천만에요", jp: "どういたしまして"},
         {kr: "여보세요", jp: "もしもし"}, {kr: "오랜만이야", jp: "ひさしぶり"},
-        {kr: "처음 뵙겠습니다", jp: "はじめまして"}, {kr: "취미", jp: "趣味(슈미)"},
-        {kr: "요리", jp: "料理(료리)"}, {kr: "독서", jp: "読書(도쿠쇼)"}, {kr: "여행", jp: "旅行(료코)"},
-        {kr: "사진", jp: "写真(샤신)"}, {kr: "수영", jp: "水泳(스이에이)"},
-        {kr: "이쪽이야말로", jp: "こちらこそ"}, {kr: "진실은 하나!", jp: "真実はいつもひとつ！"}
+        {kr: "처음 뵙겠습니다", jp: "はじめまして"}, {kr: "취미", jp: "しゅみ"},
+        {kr: "요리", jp: "りょうり"}, {kr: "독서", jp: "どくしょ"}, {kr: "여행", jp: "りょこう"},
+        {kr: "사진", jp: "しゃしん"}, {kr: "수영", jp: "すいえい"},
+        {kr: "이쪽이야말로", jp: "こちらこそ"}, {kr: "진실은 하나!", jp: "しんじつはいつもひとつ！"}
     ];
 
     let currentUnitData = [];
@@ -115,7 +113,6 @@
     let wordIdx = 0;
     let isAnswerStep = false;
 
-    // 배열을 랜덤하게 섞는 함수 (Fisher-Yates Shuffle)
     function shuffle(array) {
         let currentIndex = array.length, randomIndex;
         while (currentIndex != 0) {
@@ -130,11 +127,8 @@
         unitIdx = idx;
         wordIdx = 0;
         isAnswerStep = false;
-        
-        // 원본 데이터를 복사해서 랜덤하게 섞음
         const rawData = [rawUnit1, rawUnit2, rawUnit3][idx];
         currentUnitData = shuffle([...rawData]);
-
         const btns = document.querySelectorAll('.unit-btn');
         btns.forEach((btn, i) => btn.classList.toggle('active', i === idx));
         render();
@@ -142,14 +136,12 @@
 
     function render() {
         const word = currentUnitData[wordIdx];
-        document.getElementById('unit-title').innerText = `사진 ${unitIdx + 1} 구역 (랜덤 모드)`;
+        document.getElementById('unit-title').innerText = `사진 ${unitIdx + 1} 단어장 (히라가나 랜덤)`;
         document.getElementById('progress').innerText = `${wordIdx + 1} / ${currentUnitData.length}`;
         document.getElementById('korean-text').innerText = word.kr;
         document.getElementById('japanese-text').innerText = word.jp;
-
         const elJp = document.getElementById('japanese-text');
         const elBtn = document.getElementById('main-btn');
-
         if (isAnswerStep) {
             elJp.classList.remove('hidden');
             elBtn.innerText = "다음 단어로";
@@ -168,15 +160,14 @@
             isAnswerStep = false;
             wordIdx++;
             if (wordIdx >= currentUnitData.length) {
-                alert(`모든 단어를 마쳤습니다! 다시 섞어 시작합니다.`);
+                alert(`해당 단계의 모든 단어를 완료했습니다! 다시 섞습니다.`);
                 wordIdx = 0;
-                shuffle(currentUnitData); // 한 바퀴 다 돌면 다시 섞기
+                shuffle(currentUnitData);
             }
         }
         render();
     }
 
-    // 처음 시작 시 1단계 섞어서 로드
     selectUnit(0);
 </script>
 </body>
