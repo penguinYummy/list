@@ -1,116 +1,54 @@
-<!DOCTYPE html>
-<html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <title>TCP</title>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <div class="layout">
-            <div class="container1" id="todoContainer">
-                <div class="todo-item">
-                    <span class="todo-number">1. </span>
-                    <input type="text" class="input">
-                    <div class="checkbox" onclick="this.classList.toggle('checked')">✓</div>
-                </div>
-            </div>
-            <div class="right">
-                <div class="container2"></div> 
-                <div class="container3">
-                    <button class="movetimeline" id="prevWeek">&lt;</button>
-                    <button class="backhome" onclick="location.href='month.html'">X</button>
-                    <div class="hour24">
-                        <div class="dayoftheweek">-</div>
-                        <div>00</div>
-                        <div>01</div>
-                        <div>02</div>
-                        <div>03</div>
-                        <div>04</div>
-                        <div>05</div>
-                        <div>06</div>
-                        <div>07</div>
-                        <div>08</div>
-                        <div>09</div>
-                        <div>10</div>
-                        <div>11</div>
-                        <div>12</div>
-                        <div>13</div>
-                        <div>14</div>
-                        <div>15</div>
-                        <div>16</div>
-                        <div>17</div>
-                        <div>18</div>
-                        <div>19</div>
-                        <div>20</div>
-                        <div>21</div>
-                        <div>22</div>
-                        <div>23</div>
-                    </div>
-                    <div class="timeline" data-day="0">
-                        <div class="theday">일요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <div class="timeline" data-day="1">
-                        <div class="theday">월요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <div class="timeline" data-day="2">
-                        <div class="theday">화요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <div class="timeline" data-day="3">
-                        <div class="theday">수요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <div class="timeline" data-day="4">
-                        <div class="theday">목요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <div class="timeline" data-day="5">
-                        <div class="theday">금요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <div class="timeline" data-day="6">
-                        <div class="theday">토요일</div>
-                        <div class="timeline-content"></div>
-                    </div>
-                    <button class="movetimeline" id="nextWeek">&gt;</button>
-                </div>
-            </div>
-        </div>
+import java.util.Scanner;
 
-        <div id="eventModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">일정 추가</div>
-                <input type="text" id="eventTitle" class="modal-input" placeholder="제목">
-                
-                <div class="time-inputs">
-                    <div class="time-input-group">
-                        <label class="time-input-label">시작 시간</label>
-                        <div class="time-input-wrapper">
-                            <input type="number" id="startHour" class="time-number-input" min="0" max="23" placeholder="시">
-                            <span class="time-separator">:</span>
-                            <input type="number" id="startMinute" class="time-number-input" min="0" max="59" placeholder="분" value="0">
-                        </div>
-                    </div>
-                    <div class="time-input-group">
-                        <label class="time-input-label">종료 시간</label>
-                        <div class="time-input-wrapper">
-                            <input type="number" id="endHour" class="time-number-input" min="0" max="23" placeholder="시">
-                            <span class="time-separator">:</span>
-                            <input type="number" id="endMinute" class="time-number-input" min="0" max="59" placeholder="분" value="0">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="modal-buttons">
-                    <button class="modal-button" id="cancelBtn">취소</button>
-                    <button class="modal-button" id="saveBtn">저장</button>
-                </div>
-                <button class="modal-button delete" id="deleteBtn" style="display: none; margin-top: 10px;">삭제</button>
-            </div>
-        </div>
+public class JapaneseStudyApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
-        <script src="script.js"></script>
-    </body>
-</html>
+        // 1. 단어 데이터 (한국어 뜻, 일본어 정답 순서)
+        // [사진 1: 기초 명사 및 대명사]
+        String[][] unit1 = {
+            {"개", "犬(いぬ)"}, {"발, 다리", "足(あし)"}, {"손", "手(て)"}, 
+            {"생선", "魚(さかな)"}, {"고양이", "猫(ねこ)"}, {"얼굴", "顔(かお)"},
+            {"책상", "机(つくえ)"}, {"나, 저 (남자가 가볍게)", "おれ"}, {"벚꽃", "桜(さくら)"}
+        };
+
+        // [사진 2: 숫자와 인사말]
+        String[][] unit2 = {
+            {"0", "ゼロ / れい"}, {"1", "いち"}, {"2", "に"}, {"3", "さん"},
+            {"안녕하세요(아침)", "おはよう"}, {"안녕하세요(점심)", "こんにちは"},
+            {"감사합니다", "ありがとうございます"}, {"미안합니다", "すみません"}
+        };
+
+        // [사진 3: 자기소개 및 취미]
+        String[][] unit3 = {
+            {"취미", "趣味(しゅみ)"}, {"요리", "料理(りょうり)"}, {"독서", "読書(どくしょ)"},
+            {"처음 뵙겠습니다", "はじめまして"}, {"~라고 합니다", "~ともうします"},
+            {"진실은 언제나 하나!", "真実はいつもひとつ！"}
+        };
+
+        // 전체 단어장을 배열에 담기
+        String[][][] allUnits = {unit1, unit2, unit3};
+
+        System.out.println("=== 2026 일본어 단어 암기 프로그램 ===");
+        System.out.println("책에 답을 적은 후 [Enter]를 눌러 정답을 확인하세요!");
+
+        for (int i = 0; i < allUnits.length; i++) {
+            System.out.println("\n--- [단어장 " + (i + 1) + "단계 시작] ---");
+            
+            for (String[] word : allUnits[i]) {
+                System.out.print("[문제] " + word[0] + " -> (책에 쓴 뒤 Enter)");
+                scanner.nextLine(); // 사용자가 Enter 누를 때까지 대기
+                System.out.println(">> 정답: " + word[1]);
+                System.out.println("-----------------------------------");
+            }
+
+            if (i < allUnits.length - 1) {
+                System.out.println("\n" + (i + 1) + "단계를 마쳤습니다. 다음 단계로 가려면 Enter!");
+                scanner.nextLine();
+            }
+        }
+
+        System.out.println("\n모든 단어 학습이 끝났습니다! 수고하셨습니다.");
+        scanner.close();
+    }
+}
